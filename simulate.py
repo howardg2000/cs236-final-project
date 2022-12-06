@@ -1,16 +1,16 @@
 import numpy as np
 from mdp import MDP
-from planner import GreedyPlanner
+from planner import GreedyExplorer
 
 
 class Simulation:
-    def __init__(self, num_actions, reward_dists, reward_params, transition_probs, planner) -> None:
+    def __init__(self, num_actions, reward_dists, reward_params, transition_probs, planner, explore_freq) -> None:
         self.env = MDP(num_actions, reward_dists,
                        reward_params, transition_probs)
         self.reward_means = [(param[0] + param[1]) /
                              2 for param in reward_params]
         self.planner = planner(
-            num_actions, self.reward_means, transition_probs)
+            num_actions, self.reward_means, transition_probs, explore_freq)
 
     def simulate(self, n_iter, verbose=False):
         total_reward = 0.0
@@ -35,9 +35,9 @@ if __name__ == "__main__":
     reward_dists = [np.random.uniform, np.random.uniform]
     reward_params = [(-1, 5), (-5, 5)]
     transition_probs = [0.1, 0.1]
-    planner = GreedyPlanner
+    planner = GreedyExplorer
 
     sim = Simulation(num_actions, reward_dists,
-                     reward_params, transition_probs, planner)
+                     reward_params, transition_probs, planner, explore_freq=5)
 
     sim.simulate(25, verbose=True)

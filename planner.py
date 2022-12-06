@@ -9,6 +9,7 @@ class Planner:
 
         self.last_explored = np.array([-np.inf] * num_actions)
         self.rewards = np.array([-np.inf] * num_actions)
+        self.explored_consecutively = np.zeros(num_actions)
 
     def get_action(self, time_step):
         """Get next action to explore."""
@@ -19,9 +20,11 @@ class Planner:
         raise NotImplementedError
 
 
-class GreedyPlanner(Planner):
-    def __init__(self, num_actions, action_means, transition_probs) -> None:
+class GreedyExplorer(Planner):
+    def __init__(self, num_actions, action_means, transition_probs, explore_freq) -> None:
         super().__init__(num_actions, action_means, transition_probs)
+
+        self.explore_freq = explore_freq
 
     def get_action(self, time_step):
         """Get next action to explore."""
@@ -31,7 +34,16 @@ class GreedyPlanner(Planner):
         prob_of_same_reward = (1-self.transition_probs) ** time_since_explored
         expected_rewards = prob_of_same_reward * self.rewards + \
             (1 - prob_of_same_reward) * self.action_means
-        return np.argmax(expected_rewards)
+
+        best_action = np.argmax(expected_rewards)
+        if self.explored_consecutively[best_action] >= self.explore_freq:
+            selected_action = np.random.randint(self.num_actions)
+        else:
+            selected_action = best_action
+        prev_explores = self.explored_consecutively[selected_action]
+        self.explored_consecutively = np.zeros(self.num_actions)
+        self.explored_consecutively[selected_action] = prev_explores + 1
+        return selected_action
 
     def record_reward(self, action, timestep, reward):
         """Record reward for action."""
