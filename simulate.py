@@ -34,10 +34,13 @@ class Simulation:
 
 
 if __name__ == "__main__":
-    explore_freqs = list(range(1, 60)) + [100000000]
+    min_freq = 1
+    max_freq = 200
+    step = 5
+    explore_freqs = list(range(min_freq, max_freq, step)) + [100000000]
     explore_rewards = []
     optimal_explore_rewards = []
-    transition_probs = [0.1, 0.1]
+    transition_probs = [0.05, 0.01]
     print(transition_probs)
     for explore_freq in tqdm(explore_freqs):
         total_rewards = []
@@ -62,8 +65,8 @@ if __name__ == "__main__":
 
     explore_rewards = np.array(explore_rewards)
     optimal_explore_rewards = np.array(optimal_explore_rewards)
-    np.save("explore_rewards_1to60_0.1x0.1.npy", explore_rewards)
-    np.save("optimal_explore_rewards_1to60_0.1x0.1.npy",
+    params = f'{str(min_freq)}to{str(max_freq)}_{str(transition_probs[0])}x{str(transition_probs[1])}'
+    np.save(f"data/total_rewards/explore_rewards_{params}.npy",
+            explore_rewards)
+    np.save(f"data/optimal_rewards/optimal_explore_rewards_{params}.npy",
             optimal_explore_rewards)
-
-    # plt.plot([1, 5, 10, 20, 50, 100, 10000000000], explore_rewards)
