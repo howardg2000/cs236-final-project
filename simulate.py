@@ -40,7 +40,7 @@ if __name__ == "__main__":
     explore_freqs = list(range(min_freq, max_freq, step)) + [100000000]
     explore_rewards = []
     optimal_explore_rewards = []
-    transition_probs = [0.05, 0.01]
+    transition_probs = [0.05, 0.1]
     print(transition_probs)
     for explore_freq in tqdm(explore_freqs):
         total_rewards = []
@@ -59,7 +59,6 @@ if __name__ == "__main__":
             total, optimal = sim.simulate(num_steps)
             total_rewards.append(total)
             optimal_rewards.append(optimal)
-        print(np.mean(total_rewards))
         explore_rewards.append(total_rewards)
         optimal_explore_rewards.append(optimal_rewards)
 
