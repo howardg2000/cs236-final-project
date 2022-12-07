@@ -36,10 +36,13 @@ class GreedyExplorer(Planner):
             (1 - prob_of_same_reward) * self.action_means
 
         best_action = np.argmax(expected_rewards)
+
         if self.explored_consecutively[best_action] >= self.explore_freq:
             selected_action = np.random.randint(self.num_actions)
         else:
             selected_action = best_action
+
+        # Update the number of times the action has been explored consecutively
         prev_explores = self.explored_consecutively[selected_action]
         self.explored_consecutively = np.zeros(self.num_actions)
         self.explored_consecutively[selected_action] = prev_explores + 1
